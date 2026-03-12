@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jonah</title>
+
+<style>
+
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at 70% 80%, #1a1a25, #0f0f14 60%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+}
+
+/* LOGO */
+
+.logo {
+    font-size: 42px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg,#00ffea,#ff512f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* SEARCH BAR */
+
+.search-container {
+    width: 600px;
+    max-width: 80%;
+}
+
+.search-box {
+    width: 100%;
+    padding: 16px 25px;
+    border-radius: 40px;
+    border: none;
+    font-size: 16px;
+    background: #1c1c26;
+    color: white;
+    outline: none;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+    transition: 0.3s;
+}
+
+.search-box:focus {
+    box-shadow: 0 0 25px rgba(230, 14, 97, 0.6);
+}
+
+/* SHORTCUTS */
+
+.shortcuts {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+}
+
+.shortcut {
+    width: 110px;
+    height: 80px;
+    background: linear-gradient(135deg,#1f1f2b,#262636);
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+    text-align: center;
+}
+
+.shortcut:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(255, 0, 76, 0.5);
+}
+.shortcuts {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+}
+
+.shortcut {
+    width: 90px;
+    height: 90px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Brand Background Colors */
+
+.yt { background: #FF0000; }
+.wa { background: #25D366; }
+.ig { 
+    background: radial-gradient(circle at 30% 30%, 
+    #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); 
+}
+.x { background: #000000; }
+.sc { background: #FFFC00; }
+.dis { background: #0a62e6; }
+.shortcut img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.shortcut:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 20px rgba(255,0,80,0.6);
+}
+.news-section {
+    width: 90%;
+    max-width: 1100px;
+    margin-top: 80px;
+}
+
+.news-section h2 {
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.news-card {
+    background: #1c1c26;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0,255,200,0.2);
+}
+
+.news-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.news-content {
+    padding: 12px;
+}
+
+.news-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.news-source {
+    font-size: 12px;
+    color: #aaa;
+}
+/* Width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track (background) */
+::-webkit-scrollbar-track {
+    background: #0f0f14;
+    border-radius: 10px;
+}
+
+/* Thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00eaff, #0066ff);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.6);
+    transition: 0.3s;
+}
+
+/* Hover effect */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #00fff7, #0044ff);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.9);
+}
+
+/* Active (when clicking) */
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #00c3ff, #0033cc);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0,234,255,0.8), rgba(0,102,255,0.8));
+    backdrop-filter: blur(6px);
+    border-radius: 10px;
+    border: 1px solid rgba(0,255,255,0.2);
+    box-shadow: 0 0 12px rgba(0, 234, 255, 0.7);
+}
+.radio-player {
+    width: 90%;
+    max-width: 1100px;
+    margin-top: 40px;
+    padding: 20px 25px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #0a0f1f, #111827);
+    box-shadow: 
+        0 0 25px rgba(0, 140, 255, 0.25),
+        inset 0 0 15px rgba(0, 200, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.radio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.station-name {
+    font-size: 16px;
+    color: #00eaff;
+    letter-spacing: 1px;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #ff4d4d;
+}
+
+.live-indicator .dot {
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+    box-shadow: 0 0 10px red;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+.radio-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Play Button */
+#playBtn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(145deg, #00c6ff, #0072ff);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+    transition: 0.3s;
+}
+
+#playBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(0, 200, 255, 1);
+}
+
+/* Volume */
+#volume {
+    flex: 1;
+    accent-color: #00eaff;
+}
+
+/* Wave animation */
+.wave {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 30px;
+}
+
+.wave span {
+    width: 4px;
+    height: 10px;
+    background: linear-gradient(180deg, #00eaff, #0072ff);
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(0, 200, 255, 0.8);
+    animation: bounce 1s infinite ease-in-out;
+}
+
+/* Different delays for each bar */
+.wave span:nth-child(1) { animation-delay: 0s; }
+.wave span:nth-child(2) { animation-delay: 0.1s; }
+.wave span:nth-child(3) { animation-delay: 0.2s; }
+.wave span:nth-child(4) { animation-delay: 0.3s; }
+.wave span:nth-child(5) { animation-delay: 0.4s; }
+.wave span:nth-child(6) { animation-delay: 0.5s; }
+.wave span:nth-child(7) { animation-delay: 0.6s; }
+
+@keyframes bounce {
+    0%, 100% { height: 6px; opacity: 0.5; }
+    50% { height: 28px; opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="logo">
+        <img src="assets/image2.png" alt="Jonah Logo" class="brand-logo">
+    </div>
+
+<div class="search-container">
+    <input class="search-box" id="homeSearch" placeholder="Search the web">
+</div>
+
+<div class="shortcuts">
+
+    <div class="shortcut yt" onclick="go('https://youtube.com')">
+        <img src="https://cdn.simpleicons.org/youtube/FFFFFF">
+    </div>
+
+    <div class="shortcut dis" onclick="go('https://discord.com')">
+        <img src="https://cdn.simpleicons.org/discord/FFFFFF">
+    </div>
+
+    <div class="shortcut wa" onclick="go('https://web.whatsapp.com')">
+        <img src="https://cdn.simpleicons.org/whatsapp/FFFFFF">
+    </div>
+
+    <div class="shortcut ig" onclick="go('https://instagram.com')">
+        <img src="https://cdn.simpleicons.org/instagram/FFFFFF">
+    </div>
+    
+
+    <div class="shortcut x" onclick="go('https://x.com')">
+        <img src="https://cdn.simpleicons.org/x/FFFFFF">
+    </div>
+
+    <div class="shortcut sc" onclick="go('https://snapchat.com')">
+        <img src="https://cdn.simpleicons.org/snapchat/FFFFFF">
+    </div>
+
+</div>
+
+<div class="radio-player">
+   
+    <div class="radio-header">
+        <div class="live-indicator">
+            <span class="dot"></span>
+            LIVE FM
+        </div>
+        <div class="station-name">Jonah Radio</div>
+    </div>
+
+    <div class="radio-controls">
+        <button id="playBtn">▶</button>
+
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+
+        <div class="wave">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <audio id="radioStream"></audio>
+
+</div>
+<div class="news-section" id="newsSection">
+    <h2>Trending News</h2>
+    <div class="news-grid" id="newsGrid"></div>
+</div>
+
+<script>
+
+function go(url) {
+    window.location.href = url;
+}
+
+document.getElementById("homeSearch").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        const query = this.value.trim();
+        if(query !== ""){
+            window.location.href = "search.html?q=" + encodeURIComponent(query);
+        }
+    }
+});
+
+</script>
+<script>
+
+const API_KEY = "707146fc1eed4462a9609898231f68cd";
+
+let page = 1;
+let loading = false;
+const CACHE_TIME = 30 * 60 * 1000; // 30 minutes
+
+function isCacheValid() {
+    const last = localStorage.getItem("lastUpdated");
+    return last && (Date.now() - last < CACHE_TIME);
+}
+function loadFromCache() {
+    const cached = localStorage.getItem("cachedNews");
+
+    if (cached) {
+        const articles = JSON.parse(cached);
+        renderNews(articles);
+    } else {
+        console.warn("No cached news available");
+    }
+}
+function renderNews(articles) {
+    const grid = document.getElementById("newsGrid");
+    grid.innerHTML = "";
+
+    articles
+        .filter(a => a.urlToImage)
+        .forEach(article => {
+            const card = createCard(article);
+            grid.appendChild(card);
+        });
+}
+// 🔥 INITIAL LOAD
+async function loadNews() {
+    if (isCacheValid()) {
+        loadFromCache();
+        return;
+    }
+
+    // else fetch fresh
+    try {
+        const data = await window.api.getNews(1);
+
+        if (data && data.articles?.length > 0) {
+            localStorage.setItem("cachedNews", JSON.stringify(data.articles));
+            localStorage.setItem("lastUpdated", Date.now());
+            renderNews(data.articles);
+        } else {
+            loadFromCache();
+        }
+    } catch {
+        loadFromCache();
+    }
+}
+
+// 🔁 LOAD MORE (INFINITE SCROLL)
+const MAX_PAGES = 8;
+
+async function loadMoreNews() {
+    if (loading) return;
+    if (page >= MAX_PAGES) return;
+
+    loading = true;
+    page++;
+
+    try {
+        const data = await window.api.getNews(page);
+
+        if (!data || !data.articles) return;
+
+        const grid = document.getElementById("newsGrid");
+
+        data.articles.forEach(article => {
+            const card = createCard(article);
+            grid.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Load more error:", err);
+    }
+
+    loading = false;
+}
+
+// 🧩 CARD CREATOR (clean reusable)
+function createCard(article) {
+    const card = document.createElement("div");
+    card.className = "news-card";
+
+    const image = article.urlToImage || "https://via.placeholder.com/300x160?text=News";
+
+    card.innerHTML = `
+        <img src="${image}" onerror="this.src='https://via.placeholder.com/300x160?text=Image+Unavailable'">
+        <div class="news-content">
+            <div class="news-title">${article.title}</div>
+            <div class="news-source">${article.source.name}</div>
+        </div>
+    `;
+
+    card.onclick = () => window.location.href = article.url;
+
+    return card;
+}
+
+// 📜 SCROLL DETECTION
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        loadMoreNews();
+    }
+});
+
+// 🚀 START
+loadNews();
+
+// 🔄 AUTO REFRESH
+setInterval(loadNews, 1800000);
+
+</script>
+<script>
+const audio = document.getElementById("radioStream");
+const playBtn = document.getElementById("playBtn");
+const volume = document.getElementById("volume");
+const wave = document.querySelector(".wave");
+
+function setWave(active) {
+    wave.style.opacity = active ? "1" : "0.3";
+}
+
+let isPlaying = false;
+let currentStation = null;
+
+// 🌍 PREMIUM ENGLISH NEWS (priority list)
+const englishNewsStations = [
+    {
+        name: "Jonah News",
+        url: "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service"
+    },
+    {
+        name: "Jonah News",
+        url: "https://tunein.streamguys1.com/cnn-newsource"
+    },
+    {
+        name: "Jonah News",
+        url: "https://live-radio01.mediahubaustralia.com/2ABC/mp3/"
+    },
+    {
+        name: "Jonah News",
+        url: "https://timesnow.airtime.pro/timesnow_a"
+    }
+];
+
+// 🌍 Detect country
+async function detectCountry() {
+    try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        return data.country_name || "India";
+    } catch {
+        return "India";
+    }
+}
+
+// 🧠 Try premium stations FIRST
+function playPremiumFirst() {
+    tryPlay(englishNewsStations);
+}
+
+// 📰 Fallback: Radio Browser (ENGLISH filter)
+async function loadEnglishFallback() {
+    const country = await detectCountry();
+
+    const res = await fetch(
+        `https://de1.api.radio-browser.info/json/stations/search?country=${country}&tag=news&limit=30`
+    );
+
+    const stations = await res.json();
+
+    // ✅ filter English + playable
+    const validStations = stations.filter(s =>
+        s.url_resolved &&
+        s.language && s.language.toLowerCase().includes("english") &&
+        (s.url_resolved.includes("mp3") ||
+         s.url_resolved.includes("aac") ||
+         s.url_resolved.includes("stream"))
+    );
+
+    if (validStations.length === 0) {
+        useUltimateFallback();
+        return;
+    }
+
+    tryPlay(validStations);
+}
+
+// 🔁 Try list until one works
+function tryPlay(stations) {
+    let index = 0;
+
+    function tryNext() {
+        if (index >= stations.length) {
+            // try fallback if premium failed
+            if (stations === englishNewsStations) {
+                loadEnglishFallback();
+            } else {
+                useUltimateFallback();
+            }
+            return;
+        }
+
+        const station = stations[index];
+        audio.src = station.url;
+
+        audio.play()
+            .then(() => {
+                currentStation = station.name;
+                updateUI();
+                playBtn.innerText = "⏸";
+                isPlaying = true;
+                
+            })
+            .catch(() => {
+                index++;
+                tryNext();
+            });
+    }
+
+    tryNext();
+}
+
+// 🛟 FINAL fallback (always English)
+function useUltimateFallback() {
+    audio.src = "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service";
+    currentStation = "BBC World Service";
+    updateUI();
+}
+
+// 🎯 UI update
+function updateUI() {
+    document.querySelector(".station-name").innerText = currentStation;
+}
+
+// ▶ Play / Pause
+playBtn.addEventListener("click", () => {
+    if (!audio.src) return;
+
+    if (!isPlaying) {
+        audio.play();
+        playBtn.innerText = "⏸";
+        setWave(true);
+    } else {
+        audio.pause();
+        playBtn.innerText = "▶";
+        setWave(false);
+    }
+
+    isPlaying = !isPlaying;
+});
+
+// 🔊 Volume
+volume.addEventListener("input", () => {
+    audio.volume = volume.value;
+});
+
+// 🚀 INIT
+playPremiumFirst();
+</script>
+
+</body>
+</html>

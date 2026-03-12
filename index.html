@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jonah</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TITLE BAR -->
+<div class="titlebar">
+
+    <!-- LEFT: Tabs -->
+    <div class="tab-bar">
+        <div class="tab active">
+            <img src="assets/logo.png" class="tab-logo">
+            <span>New Tab</span>
+            <span class="close-tab">✕</span>
+        </div>
+        <div class="new-tab">+</div>
+    </div>
+
+    <!-- RIGHT: Branding + Window Controls -->
+    <div class="title-right">
+        <img src="assets/ss.png" class="cogni-logo">
+
+        <div class="window-controls">
+            <button onclick="minimizeWindow()">—</button>
+            <button onclick="maximizeWindow()">☐</button>
+            <button onclick="closeWindow()" class="close-btn">✕</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- ADDRESS BAR -->
+<div class="topbar">
+
+    <div class="nav-buttons">
+        <button onclick="goBack()">←</button>
+        <button onclick="goForward()">→</button>
+        <button onclick="refreshPage()">⟳</button>
+    </div>
+
+    <input type="text" id="urlBar" placeholder="Search or enter address">
+
+    
+
+    <!-- Chat Button -->
+    <button class="chat-btn" onclick="toggleAI()">
+        Chat
+    </button>
+    <button class="cite-btn" onclick="openCitationOverlay()">
+        <img src="assets/ref.png" class="cite-icon">
+    </button>
+    
+</div>
+
+<!-- BROWSER CONTENT -->
+<div class="content">
+   <webview 
+        id="browser"
+        preload="./webview-preload.js"
+        src="home.html"
+        style="width:100%; height:100%"
+        partition="persist:main"
+        allowpopups>
+    </webview>
+
+
+</div>
+
+<!-- AI PANEL -->
+<div id="aiPanel" class="ai-hidden">
+  <iframe src="ai-panel.html"></iframe>
+</div>
+
+<script src="renderer.js"></script>
+
+<script>
+function minimizeWindow() {
+    window.api.minimize();
+}
+
+function maximizeWindow() {
+    window.api.maximize();
+}
+
+function closeWindow() {
+    window.api.close();
+}
+</script>
+<script>
+async function openCitationOverlay() {
+    const webview = document.getElementById("browser");
+
+    const data = await webview.executeJavaScript(`
+        ({
+            title: document.title,
+            url: location.href,
+            author: document.querySelector("meta[name='author']")?.content,
+            published: document.querySelector("meta[property='article:published_time']")?.content,
+            siteName: document.querySelector("meta[property='og:site_name']")?.content
+        })
+    `);
+
+    webview.executeJavaScript(`
+        (function() {
+
+            // Remove existing panel if already open
+            const old = document.getElementById("jonah-cite-panel");
+            if (old) old.remove();
+
+            const data = ${JSON.stringify(data)};
+
+            function getSiteName(d) {
+                return d.siteName || location.hostname.replace("www.", "");
+            }
+
+            function getAuthor(d) {
+                return d.author || getSiteName(d);
+            }
+
+            function getDateAPA(d) {
+                if (!d.published) return "(n.d.)";
+                const date = new Date(d.published);
+                return "(" + date.getFullYear() + ")";
+            }
+
+            function cleanTitle(title) {
+                return title ? title.split(" - ")[0] : "";
+            }
+
+            function formatAPA(d) {
+                return getAuthor(d) + ". " + getDateAPA(d) + ". " + cleanTitle(d.title) + ". " + d.url;
+            }
+
+            function formatMLA(d) {
+                return '"' + cleanTitle(d.title) + '." ' + getSiteName(d) + ", " + d.url + ".";
+            }
+
+            // Create panel
+            const panel = document.createElement("div");
+            panel.id = "jonah-cite-panel";
+
+            panel.innerHTML = \`
+                <div class="header">
+                    📄 Citation
+                    <span id="closeBtn">✕</span>
+                </div>
+
+                <div class="box">
+                    <strong>APA</strong>
+                    <p id="apa">\${formatAPA(data)}</p>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('apa').innerText)">Copy</button>
+                </div>
+
+                <div class="box">
+                    <strong>MLA</strong>
+                    <p id="mla">\${formatMLA(data)}</p>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('mla').innerText)">Copy</button>
+                </div>
+            \`;
+
+            // Styles (futuristic 🔥)
+            const style = document.createElement("style");
+            style.innerHTML = \`
+                #jonah-cite-panel {
+                    position: fixed;
+                    top: 50px; /* 🔼 pushed slightly up */
+                    right: 20px;
+                    width: 350px;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    background: rgba(10, 15, 28, 0.95);
+                    color: white;
+                    font-family: Arial;
+                    border-radius: 12px;
+                    box-shadow: 0 0 25px rgba(0,234,255,0.4);
+                    border: 1px solid #00eaff;
+                    z-index: 999999;
+                    backdrop-filter: blur(12px);
+                    animation: fadeIn 0.3s ease;
+                    scroll-behavior: smooth;
+                }
+
+                /* 🔥 Futuristic Scrollbar */
+                #jonah-cite-panel::-webkit-scrollbar {
+                    width: 8px;
+                }
+
+                #jonah-cite-panel::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.3);
+                    border-radius: 10px;
+                }
+
+                #jonah-cite-panel::-webkit-scrollbar-thumb {
+                    background: linear-gradient(180deg, #00eaff, #0072ff);
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px #00eaff;
+                }
+
+                #jonah-cite-panel::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(180deg, #00ffff, #0099ff);
+                    box-shadow: 0 0 15px #00eaff;
+                }
+
+                .header {
+                    padding: 10px;
+                    font-weight: bold;
+                    color: #00eaff;
+                    display: flex;
+                    justify-content: space-between;
+                    border-bottom: 1px solid rgba(0,234,255,0.3);
+                }
+
+                .box {
+                    padding: 10px;
+                    margin: 10px;
+                    background: rgba(0,234,255,0.05);
+                    border-radius: 8px;
+                }
+
+                button {
+                    margin-top: 5px;
+                    background: linear-gradient(135deg, #0072ff, #00eaff);
+                    border: none;
+                    padding: 5px 10px;
+                    color: white;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: 0.3s;
+                }
+
+                button:hover {
+                    box-shadow: 0 0 10px #00eaff;
+                    transform: scale(1.05);
+                }
+
+                #closeBtn {
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
+
+                #closeBtn:hover {
+                    color: #ff4d4d;
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+            \`;
+
+            document.head.appendChild(style);
+            document.body.appendChild(panel);
+
+            document.getElementById("closeBtn").onclick = () => panel.remove();
+
+        })();
+    `);
+}
+</script>
+<script>
+    async function injectTrustPanel() {
+        const webview = document.getElementById("browser");
+
+        console.log("CLICKED TRUST");
+
+        const url = await webview.executeJavaScript(`location.href`);
+
+        // 🚫 Skip home.html
+        if (url.startsWith("file://")) return;
+
+        // ✅ FIX: DEFINE DOMAIN
+        const domain = await webview.executeJavaScript(`location.hostname`);
+
+        console.log("DOMAIN:", domain);
+
+        const response = await fetch(`http://127.0.0.1:3000/trust?domain=${domain}`)
+            .then(res => res.json())
+            .catch(err => {
+                console.error("API ERROR", err);
+                return null;
+            });
+
+        console.log("API RESPONSE:", response);
+
+        if (!response) {
+            alert("API not working");
+            return;
+        }
+
+        const issuesHTML = response.issues.map(i => "<li>" + i + "</li>").join("");
+
+        webview.executeJavaScript(`
+            (function() {
+
+                const old = document.getElementById("jonah-trust-panel");
+                if (old) old.remove();
+
+                const score = ${response.score};
+
+                let color = "#ff3b3b"; // red
+                if (score >= 40 && score < 60) color = "#ffd93b"; // yellow
+                if (score >= 60) color = "#00ff9c"; // green
+
+                const issuesHTML = \`${issuesHTML}\`;
+
+                // ✅ Inject CSS dynamically
+                const style = document.createElement("style");
+                style.innerHTML = \`
+                    #jonah-trust-panel {
+                        position: fixed;
+                        top: 100px;
+                        right: 20px;
+                        width: 270px;
+
+                        background: rgba(20, 20, 30, 0.75);
+                        backdrop-filter: blur(18px);
+
+                        border-radius: 18px;
+                        padding: 14px;
+
+                        color: white;
+                        z-index: 999999;
+
+                        border: 1px solid rgba(255,255,255,0.08);
+
+                        box-shadow:
+                            0 0 25px \${color}55,
+                            0 0 10px rgba(0,0,0,0.6);
+
+                        animation: trustFadeIn 0.25s ease;
+                        transition: all 0.25s ease;
+                    }
+
+                    .trust-header {
+                        font-weight: bold;
+                        font-size: 14px;
+                        color: #00eaff;
+                        display: flex;
+                        justify-content: space-between;
+                    }
+
+                    #closeTrust {
+                        cursor: pointer;
+                        opacity: 0.6;
+                        transition: 0.2s;
+                    }
+
+                    #closeTrust:hover {
+                        opacity: 1;
+                    }
+
+                    .trust-score {
+                        font-size: 32px;
+                        margin: 10px 0;
+                        font-weight: bold;
+                        text-shadow: 0 0 12px currentColor;
+                    }
+
+                    .trust-meta {
+                        font-size: 12px;
+                        opacity: 0.85;
+                        margin-top: 4px;
+                    }
+
+                    .trust-issues {
+                        margin-top: 10px;
+                        font-size: 12px;
+                    }
+
+                    .trust-issues ul {
+                        padding-left: 16px;
+                        margin: 5px 0;
+                    }
+
+                    @keyframes trustFadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(10px) scale(0.95);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
+                    }
+                \`;
+
+                document.head.appendChild(style);
+
+                // ✅ Create panel
+                const panel = document.createElement("div");
+                panel.id = "jonah-trust-panel";
+
+                panel.innerHTML = \`
+                    <div class="trust-header">
+                        🔐 Jonah Security Trust Score
+                        <span id="closeTrust">✕</span>
+                    </div>
+
+                    <div class="trust-score" style="color:\${color}">
+                        \${score}/100
+                    </div>
+
+                    <div class="trust-meta">
+                        🧠 \${"${response.community}"}
+                    </div>
+
+                    <div class="trust-meta">
+                        🦠 \${"${response.security}"}
+                    </div>
+
+                    <div class="trust-issues">
+                        <strong>Top Mentions:</strong>
+                        <ul>\${issuesHTML}</ul>
+                    </div>
+                \`;
+
+                document.body.appendChild(panel);
+
+                // ✅ Close animation
+                document.getElementById("closeTrust").onclick = () => {
+                    panel.style.opacity = "0";
+                    panel.style.transform = "scale(0.9)";
+                    setTimeout(() => panel.remove(), 200);
+                };
+
+            })();
+        `);
+    }
+</script>
+</body>
+</html>
