@@ -150,7 +150,7 @@ app.get("/trust", async (req, res) => {
         for (let q of queries) {
             const data = await fetchRedditAPI(q);
             posts.push(...data);
-            await sleep(600);
+            await sleep(2500 + Math.random() * 1500);
         }
 
         /* 🔄 FALLBACK */
