@@ -277,7 +277,7 @@ async function openCitationOverlay() {
 
         console.log("DOMAIN:", domain);
 
-        const response = await fetch(`http://127.0.0.1:3000/trust?domain=${domain}`)
+        const response = await fetch(`http://www.veronicavai.com/trust?domain=${domain}`)
             .then(res => res.json())
             .catch(err => {
                 console.error("API ERROR", err);
